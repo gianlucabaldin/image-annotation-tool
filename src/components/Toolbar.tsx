@@ -1,29 +1,28 @@
 import React from "react";
+import { ACTION_TYPES } from "../utils/types";
 
 const Toolbar: React.FC<{
-  onCreateRectangle?: () => void;
-  onCreateCircle?: () => void;
-  onSelect?: () => void;
-}> = ({ onCreateRectangle, onCreateCircle, onSelect }) => {
+  setAction: (action: ACTION_TYPES) => void;
+}> = ({ setAction }) => {
   return (
-    <div className="flex flex-col gap-4 justify-center my-4 px-4 w-52 border border-gray-400">
+    <div className="flex flex-col gap-4 justify-center my-4 px-4 w-64 border border-gray-400">
       <button
         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2 w-full"
-        onClick={onCreateRectangle}
+        onClick={() => setAction(ACTION_TYPES.DRAW_RECTANGLE)}
       >
-        Rettangolo
+        DRAW RECTANGLE
       </button>
       <button
         className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2 w-full"
-        onClick={onCreateCircle}
+        onClick={() => setAction(ACTION_TYPES.DRAW_CIRCLE)}
       >
-        Cerchio
+        DRAW CIRCLE
       </button>
       <button
         className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded w-full"
-        onClick={onSelect}
+        onClick={() => setAction(ACTION_TYPES.SELECT)}
       >
-        Seleziona
+        SELECT ELEMENT
       </button>
     </div>
   );

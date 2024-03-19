@@ -1,6 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
+import { ACTION_TYPES } from "../utils/types";
 
-const Board: React.FC = () => {
+interface BoardProps {
+  action: ACTION_TYPES | null;
+}
+const Board = ({ action }: BoardProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [startX, setStartX] = useState<number | null>(null);
@@ -18,14 +22,14 @@ const Board: React.FC = () => {
   }, []);
 
   const handleClick = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
-    if (context) {
+    if (context && action) {
       setIsDrawing(true);
       if (startX === null && startY === null) {
         setStartX(e.clientX);
         setStartY(e.clientY);
         setIsDrawing(true);
       } else {
-        drawRectangle(e.clientX, e.clientY);
+        draw(e.clientX, e.clientY, action);
       }
     }
   };
@@ -35,12 +39,18 @@ const Board: React.FC = () => {
     setStartY(null);
   };
 
-  const drawRectangle = (x: number, y: number) => {
+  const draw = (x: number, y: number, action: ACTION_TYPES) => {
     if (context && startX !== null && startY !== null) {
       const width = x - startX;
       const height = y - startY;
       context.strokeStyle = "red";
-      context.strokeRect(startX, startY, width, height);
+      if (action === ACTION_TYPES.DRAW_RECTANGLE) {
+        context.strokeRect(startX, startY, width, height);
+      } else if (action === ACTION_TYPES.DRAW_CIRCLE) {
+        context.beginPath();
+        context.arc(startX, startY, Math.abs(width / 2), 0, 2 * Math.PI);
+        context.stroke();
+      }
       resetCoordinates();
       setIsDrawing(false);
     }
