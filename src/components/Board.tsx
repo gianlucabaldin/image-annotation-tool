@@ -75,23 +75,21 @@ const Board = ({ action }: BoardProps) => {
       tempX !== null &&
       tempY !== null
     ) {
-      const width = tempX - startX;
-      const height = tempY - startY;
+      // const width = tempX - startX;
+      // const height = tempY - startY;
+      // clears the canvas with all the temporary dashed lines while drawing
       context.clearRect(0, 0, context.canvas.width, context.canvas.height);
       rectangles.forEach((rect) => {
-        // context.strokeStyle = "red";
-        // if (rect.startX && rect.startY && rect.endX && rect.endY) {
-        //   context.strokeRect(
-        //     rect.startX,
-        //     rect.startY,
-        //     rect.endX - rect.startX,
-        //     rect.endY - rect.startY
-        //   );
-        // }
-        drawRectangle(rect, context, isDrawing);
+        // recreates the rectangles while is drawing, between first and second click
+        drawRectangle(rect, context, isDrawing ? "blue" : "red");
       });
-      context.strokeStyle = "blue";
-      context.strokeRect(startX, startY, width, height);
+      // draws the temporary rectangle
+      drawRectangle(
+        { startX, startY, endX: tempX, endY: tempY },
+        context,
+        undefined,
+        true
+      );
     }
   }, [tempX, tempY]);
 
@@ -99,7 +97,7 @@ const Board = ({ action }: BoardProps) => {
     if (context) {
       context.clearRect(0, 0, context.canvas.width, context.canvas.height);
       rectangles.forEach((rect) => {
-        context.strokeStyle = "red";
+        context.strokeStyle = "blue";
         if (rect.startX && rect.startY && rect.endX && rect.endY) {
           context.strokeRect(
             rect.startX,
