@@ -4,15 +4,15 @@ import Toolbar from "./components/Toolbar";
 import { ACTION_TYPES } from "./utils/types";
 
 const App: React.FC = () => {
-  const [isDrawing, setIsDrawing] = useState<ACTION_TYPES | null>(null);
+  const [action, setAction] = useState<ACTION_TYPES | null>(null);
   return (
     <>
       <div className="flex">
-        <Board action={isDrawing} />
-        <Toolbar setAction={setIsDrawing} />
+        <Board action={action} />
+        <Toolbar setAction={setAction} />
       </div>
       {/* to remove */}
-      <p>isDrawing: *{(isDrawing ?? "null").toString()}*</p>
+      <p>action: *{(action ?? "null").toString()}*</p>
     </>
   );
 };
