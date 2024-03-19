@@ -8,10 +8,7 @@ interface BoardProps {
 
 const Board = ({ action }: BoardProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [startX, setStartX] = useState<number | null>(null);
-  const [startY, setStartY] = useState<number | null>(null);
-  const [tempX, setTempX] = useState<number | null>(null);
-  const [tempY, setTempY] = useState<number | null>(null);
+  const [coordinates, setCoordinates] = useState<IRectangle | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [rectangles, setRectangles] = useState<Array<IRectangle>>([]);
   const [context, setContext] = useState<CanvasRenderingContext2D | null>(null);
@@ -28,25 +25,26 @@ const Board = ({ action }: BoardProps) => {
 
   const handleClick = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
     if (context && action) {
-      const mouseX = e.clientX;
-      const mouseY = e.clientY;
+      const { clientX: mouseX, clientY: mouseY } = e;
+
       if (!isDrawing) {
-        setStartX(mouseX);
-        setStartY(mouseY);
-      } else {
-        const width = mouseX - startX!;
-        const height = mouseY - startY!;
-        if (startX !== null && startY !== null) {
+        setCoordinates({ startX: mouseX, startY: mouseY });
+      } else if (coordinates) {
+        const { startX, startY } = coordinates;
+        if (!!startX && !!startY) {
+          const width = mouseX - startX;
+          const height = mouseY - startY;
           const newRectangle = {
-            startX: startX,
-            startY: startY,
+            startX,
+            startY,
             endX: startX + width,
             endY: startY + height,
           };
           setRectangles([...rectangles, newRectangle]);
-          resetCoordinates();
+          setCoordinates(null); // Reset coordinates for next rectangle
         }
       }
+
       setIsDrawing(!isDrawing);
     }
   };
@@ -54,61 +52,36 @@ const Board = ({ action }: BoardProps) => {
   const handleMouseMove = (
     e: React.MouseEvent<HTMLCanvasElement, MouseEvent>
   ) => {
-    if (isDrawing && startX !== null && startY !== null) {
-      setTempX(e.clientX);
-      setTempY(e.clientY);
+    if (isDrawing && coordinates) {
+      setCoordinates({ ...coordinates, endX: e.clientX, endY: e.clientY });
     }
-  };
-
-  const resetCoordinates = () => {
-    setStartX(null);
-    setStartY(null);
-    setTempX(null);
-    setTempY(null);
   };
 
   useEffect(() => {
-    if (
-      context &&
-      startX !== null &&
-      startY !== null &&
-      tempX !== null &&
-      tempY !== null
-    ) {
-      // const width = tempX - startX;
-      // const height = tempY - startY;
-      // clears the canvas with all the temporary dashed lines while drawing
-      context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-      rectangles.forEach((rect) => {
-        // recreates the rectangles while is drawing, between first and second click
-        drawRectangle(rect, context, isDrawing ? "blue" : "red");
-      });
-      // draws the temporary rectangle
-      drawRectangle(
-        { startX, startY, endX: tempX, endY: tempY },
-        context,
-        undefined,
-        true
-      );
+    if (context && coordinates) {
+      const { startX, startY, endX, endY } = coordinates;
+      if (
+        startX !== null &&
+        startY !== null &&
+        endX !== null &&
+        endY !== null
+      ) {
+        context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+        rectangles.forEach((rect) => drawRectangle(rect, context, "blue"));
+        // Draw temporary rectangle
+        drawRectangle({ ...coordinates }, context, undefined, true);
+      }
     }
-  }, [tempX, tempY]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [coordinates]); // Update only when coordinates change
 
   useEffect(() => {
     if (context) {
       context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-      rectangles.forEach((rect) => {
-        context.strokeStyle = "blue";
-        if (rect.startX && rect.startY && rect.endX && rect.endY) {
-          context.strokeRect(
-            rect.startX,
-            rect.startY,
-            rect.endX - rect.startX,
-            rect.endY - rect.startY
-          );
-        }
-      });
+      rectangles.forEach((rect) => drawRectangle(rect, context, "blue"));
     }
-  }, [rectangles]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rectangles]); // Update only when rectangles change
 
   return (
     <canvas
