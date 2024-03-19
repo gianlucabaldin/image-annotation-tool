@@ -4,15 +4,20 @@ export enum ACTION_TYPES {
   SELECT = "SELECT",
 }
 
-export interface IRectangle {
-  startX?: number | null;
-  startY?: number | null;
-  endX?: number | null;
-  endY?: number | null;
+export enum SHAPE_TYPES {
+  RECTANGLE,
+  CIRCLE,
 }
 
-export interface ICircle {
-  centerX?: number | null;
-  centerY?: number | null;
-  radius?: number | null;
+export enum SHAPE_COLORS {
+  RECTANGLE = "blue",
+  CIRCLE = "green",
+}
+
+export interface IShape {
+  firstClickX?: number | null;
+  firstClickY?: number | null;
+  endX?: number | null;
+  endY?: number | null;
+  type?: SHAPE_TYPES;
 }

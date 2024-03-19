@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { drawRectangle } from "../utils/common";
-import { ACTION_TYPES, IRectangle } from "../utils/types";
+import { drawShape } from "../utils/common";
+import { ACTION_TYPES, IShape, SHAPE_TYPES } from "../utils/types";
 
 interface BoardProps {
   action?: ACTION_TYPES;
@@ -8,10 +8,15 @@ interface BoardProps {
 
 const Board = ({ action }: BoardProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [coordinates, setCoordinates] = useState<IRectangle | null>(null);
+  const [coordinates, setCoordinates] = useState<IShape | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [rectangles, setRectangles] = useState<Array<IRectangle>>([]);
+  const [shapes, setShapes] = useState<Array<IShape>>([]);
   const [context, setContext] = useState<CanvasRenderingContext2D | null>(null);
+
+  const shapeType =
+    action === ACTION_TYPES.DRAW_RECTANGLE
+      ? SHAPE_TYPES.RECTANGLE
+      : SHAPE_TYPES.CIRCLE;
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -28,19 +33,20 @@ const Board = ({ action }: BoardProps) => {
       const { clientX: mouseX, clientY: mouseY } = e;
 
       if (!isDrawing) {
-        setCoordinates({ startX: mouseX, startY: mouseY });
+        setCoordinates({ firstClickX: mouseX, firstClickY: mouseY });
       } else if (coordinates) {
-        const { startX, startY } = coordinates;
-        if (!!startX && !!startY) {
-          const width = mouseX - startX;
-          const height = mouseY - startY;
-          const newRectangle = {
-            startX,
-            startY,
-            endX: startX + width,
-            endY: startY + height,
+        const { firstClickX, firstClickY } = coordinates;
+        if (!!firstClickX && !!firstClickY) {
+          const width = mouseX - firstClickX;
+          const height = mouseY - firstClickY;
+          const newShape: IShape = {
+            firstClickX,
+            firstClickY,
+            endX: firstClickX + width,
+            endY: firstClickY + height,
+            type: shapeType,
           };
-          setRectangles([...rectangles, newRectangle]);
+          setShapes([...shapes, newShape]);
           setCoordinates(null); // Reset coordinates for next rectangle
         }
       }
@@ -59,29 +65,29 @@ const Board = ({ action }: BoardProps) => {
 
   useEffect(() => {
     if (context && coordinates) {
-      const { startX, startY, endX, endY } = coordinates;
+      const { firstClickX, firstClickY, endX, endY } = coordinates;
       if (
-        startX !== null &&
-        startY !== null &&
+        firstClickX !== null &&
+        firstClickY !== null &&
         endX !== null &&
         endY !== null
       ) {
         context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-        rectangles.forEach((rect) => drawRectangle(rect, context, "blue"));
-        // Draw temporary rectangle
-        drawRectangle({ ...coordinates }, context, undefined, true);
+        shapes.forEach((rect) => drawShape(rect, context, rect.type, "blue"));
+        // Draw temporary shapes
+        drawShape({ ...coordinates }, context, shapeType, undefined, true);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [coordinates]); // Update only when coordinates change
+  }, [coordinates]);
 
   useEffect(() => {
     if (context) {
       context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-      rectangles.forEach((rect) => drawRectangle(rect, context, "blue"));
+      shapes.forEach((rect) => drawShape(rect, context, rect.type, "blue"));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rectangles]); // Update only when rectangles change
+  }, [shapes]);
 
   return (
     <canvas
