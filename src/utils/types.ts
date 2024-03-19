@@ -20,4 +20,5 @@ export interface IShape {
   endX?: number | null;
   endY?: number | null;
   type?: SHAPE_TYPES;
+  label?: string;
 }
