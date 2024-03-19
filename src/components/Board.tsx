@@ -3,7 +3,7 @@ import { drawRectangle } from "../utils/common";
 import { ACTION_TYPES, IRectangle } from "../utils/types";
 
 interface BoardProps {
-  action: ACTION_TYPES | null;
+  action?: ACTION_TYPES;
 }
 
 const Board = ({ action }: BoardProps) => {

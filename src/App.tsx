@@ -4,7 +4,7 @@ import Toolbar from "./components/Toolbar";
 import { ACTION_TYPES } from "./utils/types";
 
 const App: React.FC = () => {
-  const [action, setAction] = useState<ACTION_TYPES | null>(null);
+  const [action, setAction] = useState<ACTION_TYPES | undefined>(undefined);
   return (
     <>
       <div className="flex">
@@ -12,7 +12,7 @@ const App: React.FC = () => {
         <Toolbar setAction={setAction} />
       </div>
       {/* to remove */}
-      <p>action: *{(action ?? "null").toString()}*</p>
+      <p>action: *{(action ?? "undefined").toString()}*</p>
     </>
   );
 };
