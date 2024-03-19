@@ -50,10 +50,9 @@ const Board: React.FC = () => {
     <canvas
       ref={canvasRef}
       onClick={handleClick}
-      width={canvasRef.current?.width ?? 800}
-      height={canvasRef.current?.height ?? 500}
-      style={{ border: "1px solid black" }}
-      className="m-4"
+      width={800}
+      height={500}
+      className="m-4 border border-gray-400"
     />
   );
 };
