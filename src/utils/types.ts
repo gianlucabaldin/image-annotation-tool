@@ -10,3 +10,9 @@ export interface IRectangle {
   endX?: number | null;
   endY?: number | null;
 }
+
+export interface ICircle {
+  centerX?: number | null;
+  centerY?: number | null;
+  radius?: number | null;
+}
