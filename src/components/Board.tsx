@@ -35,11 +35,13 @@ const Board = ({ action }: BoardProps) => {
   const handleClick = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
     e.preventDefault();
     if (context && action) {
+      if (action === ACTION_TYPES.SELECT) {
+        console.log("action is not select");
+        return;
+      }
       const { clientX, clientY } = e;
-
       const mouseX = clientX - MARGINS;
       const mouseY = clientY - MARGINS;
-
       if (!isDrawing) {
         // First click, starts the drawing
         setCoordinates({ firstClickX: mouseX, firstClickY: mouseY });
