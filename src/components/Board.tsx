@@ -20,6 +20,9 @@ const Board = ({ action }: BoardProps) => {
       ? SHAPE_TYPES.RECTANGLE
       : SHAPE_TYPES.CIRCLE;
 
+  const MARGINS = 16;
+  const marginClass = `m-${MARGINS / 4}`;
+
   useEffect(() => {
     if (canvasRef.current) {
       const canvas = canvasRef.current;
@@ -32,7 +35,10 @@ const Board = ({ action }: BoardProps) => {
 
   const handleClick = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
     if (context && action) {
-      const { clientX: mouseX, clientY: mouseY } = e;
+      const { clientX, clientY } = e;
+
+      const mouseX = clientX - MARGINS;
+      const mouseY = clientY - MARGINS;
 
       if (!isDrawing) {
         // First click, starts the drawing
@@ -63,7 +69,11 @@ const Board = ({ action }: BoardProps) => {
     e: React.MouseEvent<HTMLCanvasElement, MouseEvent>
   ) => {
     if (isDrawing && coordinates) {
-      setCoordinates({ ...coordinates, endX: e.clientX, endY: e.clientY });
+      setCoordinates({
+        ...coordinates,
+        endX: e.clientX - MARGINS,
+        endY: e.clientY - MARGINS,
+      });
     }
   };
 
@@ -117,18 +127,56 @@ const Board = ({ action }: BoardProps) => {
     setAnnotations(annotationsCopy);
   };
 
+  // TO remove
+  const [mouseX, setMouseX] = useState(0);
+  const [mouseY, setMouseY] = useState(0);
+  const handleMouseMove2 = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    e.preventDefault();
+    setMouseX(e.clientX);
+    setMouseY(e.clientY);
+  };
+  const getCanvasCoordinates = () => {
+    if (canvasRef.current) {
+      const rect = canvasRef.current.getBoundingClientRect();
+      return {
+        top: rect.top + window.scrollY,
+        left: rect.left + window.scrollX,
+        right: rect.right + window.scrollX,
+        bottom: rect.bottom + window.scrollY,
+        width: rect.width,
+        height: rect.height,
+      };
+    }
+    return null;
+  };
+
+  const canvasCoordinates = getCanvasCoordinates();
+
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col" onMouseMove={handleMouseMove2}>
       <canvas
         ref={canvasRef}
         onClick={handleClick}
         onMouseMove={handleMouseMove}
         width={800}
         height={500}
-        className="m-4 border border-gray-400"
+        className={`${marginClass} border border-gray-400`}
       />
       {openDialog && (
         <Dialog onClose={handleOnCloseDialog} onSave={handleSaveAnnotation} />
+      )}
+      <p className="mb-4">
+        Mouse position: ({mouseX}, {mouseY})
+      </p>
+      {canvasCoordinates && (
+        <div className="flex justify-evenly mb-4">
+          <div>Top: {canvasCoordinates.top}</div>
+          <div>Left: {canvasCoordinates.left}</div>
+          <div>Right: {canvasCoordinates.right}</div>
+          <div>Bottom: {canvasCoordinates.bottom}</div>
+          <div>Width: {canvasCoordinates.width}</div>
+          <div>Height: {canvasCoordinates.height}</div>
+        </div>
       )}
     </div>
   );
