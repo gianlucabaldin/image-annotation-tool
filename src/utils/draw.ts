@@ -69,3 +69,22 @@ const drawShapeLabel = (
     );
   }
 };
+
+// Draw temporary dashed shape on canvas while user is drawing
+export const drawTemporaryShape = (
+  coordinates: IShape,
+  ctx: CanvasRenderingContext2D,
+  shapeType: SHAPE_TYPES,
+  shapes: IShape[]
+) => {
+  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  shapes.forEach((rect) => drawShape(rect, ctx, rect.type));
+  drawShape({ ...coordinates }, ctx, shapeType, true);
+};
+export const redrawAllShapes = (
+  ctx: CanvasRenderingContext2D,
+  shapes: IShape[]
+) => {
+  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  shapes.forEach((shape) => drawShape(shape, ctx, shape.type));
+};

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { drawShape } from "../utils/common";
+import { drawTemporaryShape, redrawAllShapes } from "../utils/draw";
 import { ACTION_TYPES, IShape, SHAPE_TYPES } from "../utils/types";
 import Dialog from "./Dialog";
 
@@ -88,10 +88,7 @@ const Board = ({ action }: BoardProps) => {
         endX !== null &&
         endY !== null
       ) {
-        context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-        shapes.forEach((rect) => drawShape(rect, context, rect.type));
-        // Draw temporary shapes
-        drawShape({ ...coordinates }, context, shapeType, true);
+        drawTemporaryShape(coordinates, context, shapeType, shapes);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -99,8 +96,7 @@ const Board = ({ action }: BoardProps) => {
 
   useEffect(() => {
     if (context) {
-      context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-      shapes.forEach((shape) => drawShape(shape, context, shape.type));
+      redrawAllShapes(context, shapes);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shapes]);
@@ -129,8 +125,6 @@ const Board = ({ action }: BoardProps) => {
       {openDialog && (
         <Dialog onClose={handleOnCloseDialog} onSave={handleSaveShape} />
       )}
-      {shapes.length &&
-        shapes.map((s, i) => <p key={i}>{JSON.stringify(s, undefined, 2)}</p>)}
     </div>
   );
 };
