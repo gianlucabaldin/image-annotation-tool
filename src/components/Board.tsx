@@ -20,8 +20,6 @@ const Board = ({ action }: BoardProps) => {
       ? SHAPE_TYPES.RECTANGLE
       : SHAPE_TYPES.CIRCLE;
 
-  const MARGINS = 16;
-
   useEffect(() => {
     if (canvasRef.current) {
       const canvas = canvasRef.current;
@@ -40,8 +38,8 @@ const Board = ({ action }: BoardProps) => {
         return;
       }
       const { clientX, clientY } = e;
-      const mouseX = clientX - MARGINS;
-      const mouseY = clientY - MARGINS;
+      const mouseX = clientX;
+      const mouseY = clientY;
       if (!isDrawing) {
         // First click, starts the drawing
         setCoordinates({ firstClickX: mouseX, firstClickY: mouseY });
@@ -49,13 +47,15 @@ const Board = ({ action }: BoardProps) => {
         const { firstClickX, firstClickY } = coordinates;
         if (!!firstClickX && !!firstClickY) {
           // Second click, ends the drawing and opens dialog
-          const width = mouseX - firstClickX;
-          const height = mouseY - firstClickY;
+          // const width = mouseX - firstClickX;
+          // const height = mouseY - firstClickY;
           const newAnnotation: IAnnotation = {
             firstClickX,
             firstClickY,
-            endX: firstClickX + width,
-            endY: firstClickY + height,
+            seconcClickX: mouseX,
+            seconcClickY: mouseY,
+            // seconcClickX: firstClickX + width,
+            // seconcClickY: firstClickY + height,
             type: annotationType,
           };
           setAnnotations([...annotations, newAnnotation]);
@@ -74,8 +74,8 @@ const Board = ({ action }: BoardProps) => {
     if (isDrawing && coordinates) {
       setCoordinates({
         ...coordinates,
-        endX: e.clientX - MARGINS,
-        endY: e.clientY - MARGINS,
+        seconcClickX: e.clientX,
+        seconcClickY: e.clientY,
       });
     }
   };
@@ -94,7 +94,12 @@ const Board = ({ action }: BoardProps) => {
 
   useEffect(() => {
     if (context && coordinates) {
-      const { firstClickX, firstClickY, endX, endY } = coordinates;
+      const {
+        firstClickX,
+        firstClickY,
+        seconcClickX: endX,
+        seconcClickY: endY,
+      } = coordinates;
       if (
         firstClickX !== null &&
         firstClickY !== null &&
@@ -181,6 +186,15 @@ const Board = ({ action }: BoardProps) => {
           <div>Height: {canvasCoordinates.height}</div>
         </div>
       )}
+      annotations: <br />
+      {annotations.length &&
+        annotations.map((s, i) => (
+          <p key={i}>{JSON.stringify(s, undefined, 2)}</p>
+        ))}
+      <hr />
+      hovered:
+      {/* <br /> {hovered && <p>{JSON.stringify(hovered, undefined, 2)}</p>} */}
+      <hr />
     </div>
   );
 };

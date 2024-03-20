@@ -17,8 +17,8 @@ export enum SHAPE_COLORS {
 export interface IAnnotation {
   firstClickX?: number | null;
   firstClickY?: number | null;
-  endX?: number | null;
-  endY?: number | null;
+  seconcClickX?: number | null;
+  seconcClickY?: number | null;
   type?: SHAPE_TYPES;
   label?: string;
 }

@@ -1,3 +1,4 @@
+import { MARGINS } from "./const";
 import { IAnnotation, SHAPE_COLORS, SHAPE_TYPES } from "./types";
 
 /**
@@ -14,10 +15,16 @@ export const drawAnnotation = (
   annotationType: SHAPE_TYPES = SHAPE_TYPES.RECTANGLE,
   dashed: boolean = false
 ) => {
-  const { firstClickX, firstClickY, endX, endY } = annotation;
-  if (!firstClickX || !firstClickY || !endX || !endY) return;
-  const width = endX - firstClickX;
-  const height = endY - firstClickY;
+  const { firstClickX, firstClickY, seconcClickX, seconcClickY } = annotation;
+  if (!firstClickX || !firstClickY || !seconcClickX || !seconcClickY) return;
+  const width =
+    firstClickX > seconcClickX
+      ? firstClickX - seconcClickX
+      : seconcClickX - firstClickX;
+  const height =
+    firstClickY > seconcClickY
+      ? firstClickY - seconcClickY
+      : seconcClickY - firstClickY;
   ctx.font = "14px Arial";
   if (dashed) {
     // dashed line when drawing (between first and second click)
@@ -25,18 +32,17 @@ export const drawAnnotation = (
   }
   if (annotationType === SHAPE_TYPES.RECTANGLE) {
     ctx.strokeStyle = SHAPE_COLORS.RECTANGLE;
-    ctx.strokeRect(firstClickX, firstClickY, width, height);
+    ctx.strokeRect(firstClickX - MARGINS, firstClickY - MARGINS, width, height);
     drawAnnotationLabel(annotation, ctx);
   } else {
-    const centerX = (firstClickX + endX) / 2;
-    const centerY = (firstClickY + endY) / 2;
     const radius = Math.sqrt(
-      (firstClickX - centerX) ** 2 + (firstClickY - centerY) ** 2
+      (firstClickX - seconcClickX + MARGINS) ** 2 +
+        (firstClickY - seconcClickY + MARGINS) ** 2
     );
     ctx.strokeStyle = SHAPE_COLORS.CIRCLE;
-    drawAnnotationLabel(annotation, ctx, centerX, centerY);
+    drawAnnotationLabel(annotation, ctx, firstClickX, firstClickY);
     ctx.beginPath();
-    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+    ctx.arc(firstClickX, firstClickY, radius, 0, 2 * Math.PI);
     ctx.stroke();
   }
   // reset to non-dashed line
