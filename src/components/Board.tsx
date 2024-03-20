@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { drawTemporaryShape, redrawAllShapes } from "../utils/draw";
-import { ACTION_TYPES, IShape, SHAPE_TYPES } from "../utils/types";
+import { drawTemporaryAnnotation, redrawAllAnnotations } from "../utils/draw";
+import { ACTION_TYPES, IAnnotation, SHAPE_TYPES } from "../utils/types";
 import Dialog from "./Dialog";
 
 interface BoardProps {
@@ -9,13 +9,13 @@ interface BoardProps {
 
 const Board = ({ action }: BoardProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [coordinates, setCoordinates] = useState<IShape | null>(null);
+  const [coordinates, setCoordinates] = useState<IAnnotation | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [shapes, setShapes] = useState<Array<IShape>>([]);
+  const [annotations, setAnnotations] = useState<Array<IAnnotation>>([]);
   const [context, setContext] = useState<CanvasRenderingContext2D | null>(null);
   const [openDialog, setOpenDialog] = useState(false); // State for dialog
 
-  const shapeType =
+  const annotationType =
     action === ACTION_TYPES.DRAW_RECTANGLE
       ? SHAPE_TYPES.RECTANGLE
       : SHAPE_TYPES.CIRCLE;
@@ -43,15 +43,15 @@ const Board = ({ action }: BoardProps) => {
           // Second click, ends the drawing and opens dialog
           const width = mouseX - firstClickX;
           const height = mouseY - firstClickY;
-          const newShape: IShape = {
+          const newAnnotation: IAnnotation = {
             firstClickX,
             firstClickY,
             endX: firstClickX + width,
             endY: firstClickY + height,
-            type: shapeType,
+            type: annotationType,
           };
-          setShapes([...shapes, newShape]);
-          setCoordinates(null); // Reset coordinates for next shape
+          setAnnotations([...annotations, newAnnotation]);
+          setCoordinates(null); // Reset coordinates for next annotation
           setOpenDialog(true);
         }
       }
@@ -67,12 +67,12 @@ const Board = ({ action }: BoardProps) => {
     }
   };
 
-  const handleSaveShape = (label: string | undefined) => {
-    // Update the last shape in the shapes array with the label
+  const handleSaveAnnotation = (label: string | undefined) => {
+    // Update the last annotation in the annotations array with the label
     if (label && label.length > 0) {
-      const updatedShapes = [...shapes];
-      updatedShapes[shapes.length - 1].label = label;
-      setShapes(updatedShapes);
+      const updatedAnnotations = [...annotations];
+      updatedAnnotations[annotations.length - 1].label = label;
+      setAnnotations(updatedAnnotations);
     } else {
       removeLastElement();
     }
@@ -88,7 +88,12 @@ const Board = ({ action }: BoardProps) => {
         endX !== null &&
         endY !== null
       ) {
-        drawTemporaryShape(coordinates, context, shapeType, shapes);
+        drawTemporaryAnnotation(
+          coordinates,
+          context,
+          annotationType,
+          annotations
+        );
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -96,10 +101,10 @@ const Board = ({ action }: BoardProps) => {
 
   useEffect(() => {
     if (context) {
-      redrawAllShapes(context, shapes);
+      redrawAllAnnotations(context, annotations);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shapes]);
+  }, [annotations]);
 
   const handleOnCloseDialog = () => {
     removeLastElement();
@@ -107,9 +112,9 @@ const Board = ({ action }: BoardProps) => {
   };
 
   const removeLastElement = () => {
-    const shapesCopy = [...shapes];
-    shapesCopy.pop();
-    setShapes(shapesCopy);
+    const annotationsCopy = [...annotations];
+    annotationsCopy.pop();
+    setAnnotations(annotationsCopy);
   };
 
   return (
@@ -123,7 +128,7 @@ const Board = ({ action }: BoardProps) => {
         className="m-4 border border-gray-400"
       />
       {openDialog && (
-        <Dialog onClose={handleOnCloseDialog} onSave={handleSaveShape} />
+        <Dialog onClose={handleOnCloseDialog} onSave={handleSaveAnnotation} />
       )}
     </div>
   );

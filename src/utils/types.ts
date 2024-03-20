@@ -14,7 +14,7 @@ export enum SHAPE_COLORS {
   CIRCLE = "green",
 }
 
-export interface IShape {
+export interface IAnnotation {
   firstClickX?: number | null;
   firstClickY?: number | null;
   endX?: number | null;

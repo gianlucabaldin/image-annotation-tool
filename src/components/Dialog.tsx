@@ -16,7 +16,7 @@ const Dialog = ({ onClose, onSave }: DialogProps) => {
     <dialog className="fixed top-0 left-0 w-full h-full bg-transparent flex items-center justify-center">
       <div className="fixed top-0 left-0 w-full h-full bg-gray-500 bg-opacity-50 z-50"></div>
       <div className="bg-white rounded-lg shadow-xl p-4 w-full max-w-md relative z-50">
-        <h2 className="text-xl font-semibold mb-4">Shape label:</h2>
+        <h2 className="text-xl font-semibold mb-4">Annotation label:</h2>
         <input
           type="text"
           className="border border-gray-300 rounded-md p-2 w-full focus:outline-none focus:border-blue-500"

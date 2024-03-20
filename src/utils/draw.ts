@@ -1,20 +1,20 @@
-import { IShape, SHAPE_COLORS, SHAPE_TYPES } from "./types";
+import { IAnnotation, SHAPE_COLORS, SHAPE_TYPES } from "./types";
 
 /**
- * Draws a shape on the canvas based on the provided shape data, using the given rendering context and shape type.
+ * Draws a annotation on the canvas based on the provided annotation data, using the given rendering context and annotation type.
  *
- * @param {IShape} shape - the shape object containing the coordinates and other details of the shape
+ * @param {IAnnotation} annotation - the annotation object containing the coordinates and other details of the annotation
  * @param {CanvasRenderingContext2D} ctx - the 2D rendering context for the canvas
- * @param {SHAPE_TYPES} [shapeType=SHAPE_TYPES.RECTANGLE] - the type of shape to be drawn (default: rectangle)
- * @param {boolean} [dashed=false] - a boolean indicating if the shape should be drawn as dashed lines (default: false)
+ * @param {SHAPE_TYPES} [annotationType=SHAPE_TYPES.RECTANGLE] - the type of annotation to be drawn (default: rectangle)
+ * @param {boolean} [dashed=false] - a boolean indicating if the annotation should be drawn as dashed lines (default: false)
  */
-export const drawShape = (
-  shape: IShape,
+export const drawAnnotation = (
+  annotation: IAnnotation,
   ctx: CanvasRenderingContext2D,
-  shapeType: SHAPE_TYPES = SHAPE_TYPES.RECTANGLE,
+  annotationType: SHAPE_TYPES = SHAPE_TYPES.RECTANGLE,
   dashed: boolean = false
 ) => {
-  const { firstClickX, firstClickY, endX, endY } = shape;
+  const { firstClickX, firstClickY, endX, endY } = annotation;
   if (!firstClickX || !firstClickY || !endX || !endY) return;
   const width = endX - firstClickX;
   const height = endY - firstClickY;
@@ -23,10 +23,10 @@ export const drawShape = (
     // dashed line when drawing (between first and second click)
     ctx.setLineDash([5, 5]);
   }
-  if (shapeType === SHAPE_TYPES.RECTANGLE) {
+  if (annotationType === SHAPE_TYPES.RECTANGLE) {
     ctx.strokeStyle = SHAPE_COLORS.RECTANGLE;
     ctx.strokeRect(firstClickX, firstClickY, width, height);
-    drawShapeLabel(shape, ctx);
+    drawAnnotationLabel(annotation, ctx);
   } else {
     const centerX = (firstClickX + endX) / 2;
     const centerY = (firstClickY + endY) / 2;
@@ -34,7 +34,7 @@ export const drawShape = (
       (firstClickX - centerX) ** 2 + (firstClickY - centerY) ** 2
     );
     ctx.strokeStyle = SHAPE_COLORS.CIRCLE;
-    drawShapeLabel(shape, ctx, centerX, centerY);
+    drawAnnotationLabel(annotation, ctx, centerX, centerY);
     ctx.beginPath();
     ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
     ctx.stroke();
@@ -43,48 +43,50 @@ export const drawShape = (
   ctx.setLineDash([]);
 };
 
-const drawShapeLabel = (
-  shape: IShape,
+const drawAnnotationLabel = (
+  annotation: IAnnotation,
   ctx: CanvasRenderingContext2D,
   centerX?: number,
   centerY?: number
 ) => {
   ctx.font = "14px Arial";
-  if (shape.type === SHAPE_TYPES.RECTANGLE) {
+  if (annotation.type === SHAPE_TYPES.RECTANGLE) {
     ctx.fillStyle = SHAPE_COLORS.RECTANGLE;
     ctx.fillText(
-      shape.label ?? "",
-      shape.firstClickX ?? 0,
-      shape.firstClickY ?? 0 - 10
+      annotation.label ?? "",
+      annotation.firstClickX ?? 0,
+      annotation.firstClickY ?? 0 - 10
     );
   } else {
     ctx.fillStyle = SHAPE_COLORS.CIRCLE;
     // calculate text length
-    const labelWidth = ctx.measureText(shape.label ?? "").width;
+    const labelWidth = ctx.measureText(annotation.label ?? "").width;
     // draw text in the middle of the circle
     ctx.fillText(
-      shape.label ?? "",
+      annotation.label ?? "",
       centerX ?? 0 - labelWidth / 2,
       centerY ?? 0 + 5
     );
   }
 };
 
-// Draw temporary dashed shape on canvas while user is drawing
-export const drawTemporaryShape = (
-  coordinates: IShape,
+// Draw temporary dashed annotation on canvas while user is drawing
+export const drawTemporaryAnnotation = (
+  coordinates: IAnnotation,
   ctx: CanvasRenderingContext2D,
-  shapeType: SHAPE_TYPES,
-  shapes: IShape[]
+  annotationType: SHAPE_TYPES,
+  annotations: IAnnotation[]
 ) => {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-  shapes.forEach((rect) => drawShape(rect, ctx, rect.type));
-  drawShape({ ...coordinates }, ctx, shapeType, true);
+  annotations.forEach((rect) => drawAnnotation(rect, ctx, rect.type));
+  drawAnnotation({ ...coordinates }, ctx, annotationType, true);
 };
-export const redrawAllShapes = (
+export const redrawAllAnnotations = (
   ctx: CanvasRenderingContext2D,
-  shapes: IShape[]
+  annotations: IAnnotation[]
 ) => {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-  shapes.forEach((shape) => drawShape(shape, ctx, shape.type));
+  annotations.forEach((annotation) =>
+    drawAnnotation(annotation, ctx, annotation.type)
+  );
 };
