@@ -69,10 +69,12 @@ const Board = ({ action }: BoardProps) => {
 
   const handleSaveShape = (label: string | undefined) => {
     // Update the last shape in the shapes array with the label
-    if (label && shapes.length > 0) {
+    if (label && label.length > 0) {
       const updatedShapes = [...shapes];
       updatedShapes[shapes.length - 1].label = label;
       setShapes(updatedShapes);
+    } else {
+      removeLastElement();
     }
     setOpenDialog(false);
   };
@@ -103,6 +105,17 @@ const Board = ({ action }: BoardProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shapes]);
 
+  const handleOnCloseDialog = () => {
+    removeLastElement();
+    setOpenDialog(false);
+  };
+
+  const removeLastElement = () => {
+    const shapesCopy = [...shapes];
+    shapesCopy.pop();
+    setShapes(shapesCopy);
+  };
+
   return (
     <div className="flex flex-col">
       <canvas
@@ -114,12 +127,7 @@ const Board = ({ action }: BoardProps) => {
         className="m-4 border border-gray-400"
       />
       {openDialog && (
-        <Dialog
-          onClose={() => {
-            setOpenDialog(false);
-          }}
-          onSave={handleSaveShape}
-        />
+        <Dialog onClose={handleOnCloseDialog} onSave={handleSaveShape} />
       )}
       {shapes.length &&
         shapes.map((s, i) => <p key={i}>{JSON.stringify(s, undefined, 2)}</p>)}
