@@ -21,7 +21,6 @@ const Board = ({ action }: BoardProps) => {
       : SHAPE_TYPES.CIRCLE;
 
   const MARGINS = 16;
-  const marginClass = `m-${MARGINS / 4}`;
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -34,6 +33,7 @@ const Board = ({ action }: BoardProps) => {
   }, []);
 
   const handleClick = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
+    e.preventDefault();
     if (context && action) {
       const { clientX, clientY } = e;
 
@@ -68,6 +68,7 @@ const Board = ({ action }: BoardProps) => {
   const handleMouseMove = (
     e: React.MouseEvent<HTMLCanvasElement, MouseEvent>
   ) => {
+    e.preventDefault();
     if (isDrawing && coordinates) {
       setCoordinates({
         ...coordinates,
@@ -160,7 +161,7 @@ const Board = ({ action }: BoardProps) => {
         onMouseMove={handleMouseMove}
         width={800}
         height={500}
-        className={`${marginClass} border border-gray-400`}
+        className={"m-4 border border-gray-400"}
       />
       {openDialog && (
         <Dialog onClose={handleOnCloseDialog} onSave={handleSaveAnnotation} />
