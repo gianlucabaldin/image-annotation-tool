@@ -87,9 +87,9 @@ const Board = ({ action }: BoardProps) => {
         endY !== null
       ) {
         context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-        shapes.forEach((rect) => drawShape(rect, context, rect.type, "blue"));
+        shapes.forEach((rect) => drawShape(rect, context, rect.type));
         // Draw temporary shapes
-        drawShape({ ...coordinates }, context, shapeType, undefined, true);
+        drawShape({ ...coordinates }, context, shapeType, true);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -98,7 +98,7 @@ const Board = ({ action }: BoardProps) => {
   useEffect(() => {
     if (context) {
       context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-      shapes.forEach((shape) => drawShape(shape, context, shape.type, "blue"));
+      shapes.forEach((shape) => drawShape(shape, context, shape.type));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shapes]);

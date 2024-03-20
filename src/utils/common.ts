@@ -1,29 +1,28 @@
-import { IShape, SHAPE_TYPES } from "./types";
+import { IShape, SHAPE_COLORS, SHAPE_TYPES } from "./types";
 
 /**
- * Draws a rectangle on the canvas context with the specified color and style.
+ * Draws a shape on the canvas based on the provided shape data, using the given rendering context and shape type.
  *
- * @param {IShape} shape - the coordinates of the rectangle
- * @param {CanvasRenderingContext2D} ctx - the canvas context to draw on
- * @param {string} [color="blue"] - the color of the rectangle outline
- * @param {boolean} [dashed=false] - whether the outline should be dashed (when drawing)
+ * @param {IShape} shape - the shape object containing the coordinates and other details of the shape
+ * @param {CanvasRenderingContext2D} ctx - the 2D rendering context for the canvas
+ * @param {SHAPE_TYPES} [shapeType=SHAPE_TYPES.RECTANGLE] - the type of shape to be drawn (default: rectangle)
+ * @param {boolean} [dashed=false] - a boolean indicating if the shape should be drawn as dashed lines (default: false)
  */
 export const drawShape = (
   shape: IShape,
   ctx: CanvasRenderingContext2D,
   shapeType: SHAPE_TYPES = SHAPE_TYPES.RECTANGLE,
-  color: string = "blue",
   dashed: boolean = false
 ) => {
   const { firstClickX, firstClickY, endX, endY } = shape;
   if (!firstClickX || !firstClickY || !endX || !endY) return;
   const width = endX - firstClickX;
   const height = endY - firstClickY;
-  ctx.strokeStyle = color;
   if (dashed) {
     ctx.setLineDash([5, 5]);
   }
   if (shapeType === SHAPE_TYPES.RECTANGLE) {
+    ctx.strokeStyle = SHAPE_COLORS.RECTANGLE;
     ctx.strokeRect(firstClickX, firstClickY, width, height);
   } else {
     const centerX = (firstClickX + endX) / 2;
@@ -31,7 +30,7 @@ export const drawShape = (
     const raggio = Math.sqrt(
       (firstClickX - centerX) ** 2 + (firstClickY - centerY) ** 2
     );
-    // Disegna il cerchio
+    ctx.strokeStyle = SHAPE_COLORS.CIRCLE;
     ctx.beginPath();
     ctx.arc(centerX, centerY, raggio, 0, 2 * Math.PI);
     ctx.stroke();
