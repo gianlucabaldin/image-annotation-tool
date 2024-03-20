@@ -1,5 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
-import { drawTemporaryAnnotation, redrawAllAnnotations } from "../utils/draw";
+import { MARGINS } from "../utils/const";
+import {
+  drawTemporaryAnnotation,
+  isPointInsideCircle,
+  redrawAllAnnotations,
+} from "../utils/draw";
 import { ACTION_TYPES, IAnnotation, SHAPE_TYPES } from "../utils/types";
 import Dialog from "./Dialog";
 
@@ -57,6 +62,7 @@ const Board = ({ action }: BoardProps) => {
             // seconcClickX: firstClickX + width,
             // seconcClickY: firstClickY + height,
             type: annotationType,
+            id: Date.now().toString(),
           };
           setAnnotations([...annotations, newAnnotation]);
           setCoordinates(null); // Reset coordinates for next annotation
@@ -76,6 +82,34 @@ const Board = ({ action }: BoardProps) => {
         ...coordinates,
         seconcClickX: e.clientX,
         seconcClickY: e.clientY,
+      });
+    } else if (action === ACTION_TYPES.SELECT) {
+      const { clientX: mouseClickX, clientY: mouseClickY } = e;
+
+      annotations.forEach((annotation) => {
+        // inside rect? highlight it - WIP
+        // ...
+        // ...
+        // ...
+
+        // inside rect? highlight it - WIP
+        const radius = Math.sqrt(
+          (annotation.firstClickX! - annotation.seconcClickX! + MARGINS) ** 2 +
+            (annotation.firstClickY! - annotation.seconcClickY! + MARGINS) ** 2
+        );
+        const isInsideCircle = isPointInsideCircle(
+          mouseClickX,
+          mouseClickY,
+          annotation.firstClickX ?? 0,
+          annotation.firstClickY ?? 0,
+          radius
+        );
+        if (isInsideCircle) {
+          console.log("isInsideCircle = " + annotation.label);
+          // ....
+          // ....
+          // ....
+        }
       });
     }
   };

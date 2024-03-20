@@ -96,3 +96,17 @@ export const redrawAllAnnotations = (
     drawAnnotation(annotation, ctx, annotation.type)
   );
 };
+
+export function isPointInsideCircle(
+  pointX: number,
+  pointY: number,
+  centerX: number,
+  centerY: number,
+  radius: number
+): boolean {
+  // Calcola la distanza tra il punto e il centro del cerchio
+  const distance = Math.sqrt((pointX - centerX) ** 2 + (pointY - centerY) ** 2);
+
+  // Restituisce true se la distanza è minore o uguale al raggio, false altrimenti
+  return distance <= radius;
+}
