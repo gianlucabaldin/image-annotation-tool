@@ -1,14 +1,6 @@
 import { MARGINS } from "./const";
 import { IAnnotation, SHAPE_COLORS, SHAPE_TYPES } from "./types";
 
-/**
- * Draws a annotation on the canvas based on the provided annotation data, using the given rendering context and annotation type.
- *
- * @param {IAnnotation} annotation - the annotation object containing the coordinates and other details of the annotation
- * @param {CanvasRenderingContext2D} ctx - the 2D rendering context for the canvas
- * @param {SHAPE_TYPES} [annotationType=SHAPE_TYPES.RECTANGLE] - the type of annotation to be drawn (default: rectangle)
- * @param {boolean} [dashed=false] - a boolean indicating if the annotation should be drawn as dashed lines (default: false)
- */
 export const drawAnnotation = (
   annotation: IAnnotation,
   ctx: CanvasRenderingContext2D,
@@ -98,6 +90,48 @@ export const redrawAllAnnotations = (
   );
 };
 
+export const highlightAnnotation = (
+  mouseClickX: number,
+  mouseClickY: number,
+  context: CanvasRenderingContext2D,
+  annotations: IAnnotation[]
+) => {
+  annotations.forEach((annotation) => {
+    if (annotation.type === SHAPE_TYPES.RECTANGLE) {
+      const isHovered = isPointInRectangle(
+        mouseClickX,
+        mouseClickY,
+        annotation
+      );
+      drawAnnotation(
+        annotation,
+        context,
+        annotation.type,
+        false,
+        isHovered ? SHAPE_COLORS.HOVERED : SHAPE_COLORS.RECTANGLE
+      );
+    } else if (annotation.type === SHAPE_TYPES.CIRCLE) {
+      const radius = Math.sqrt(
+        (annotation.firstClickX! - annotation.seconcClickX! + MARGINS) ** 2 +
+          (annotation.firstClickY! - annotation.seconcClickY! + MARGINS) ** 2
+      );
+      const isHovered = isPointInsideCircle(
+        mouseClickX,
+        mouseClickY,
+        annotation.firstClickX ?? 0,
+        annotation.firstClickY ?? 0,
+        radius
+      );
+      drawAnnotation(
+        annotation,
+        context,
+        annotation.type,
+        false,
+        isHovered ? SHAPE_COLORS.HOVERED : SHAPE_COLORS.CIRCLE
+      );
+    }
+  });
+};
 export function isPointInsideCircle(
   pointX: number,
   pointY: number,
@@ -105,10 +139,8 @@ export function isPointInsideCircle(
   centerY: number,
   radius: number
 ): boolean {
-  // Calcola la distanza tra il punto e il centro del cerchio
+  // Calcolate ditance between the mouse pointer and the center of the circle
   const distance = Math.sqrt((pointX - centerX) ** 2 + (pointY - centerY) ** 2);
-
-  // Restituisce true se la distanza è minore o uguale al raggio, false altrimenti
   return distance <= radius;
 }
 
