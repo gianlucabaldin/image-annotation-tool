@@ -12,6 +12,7 @@ export enum SHAPE_TYPES {
 export enum SHAPE_COLORS {
   RECTANGLE = "blue",
   CIRCLE = "green",
+  HOVERED = "yellow",
 }
 
 export interface IAnnotation {

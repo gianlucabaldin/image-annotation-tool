@@ -1,11 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import { MARGINS } from "../utils/const";
 import {
+  drawAnnotation,
   drawTemporaryAnnotation,
+  isPointInRectangle,
   isPointInsideCircle,
   redrawAllAnnotations,
 } from "../utils/draw";
-import { ACTION_TYPES, IAnnotation, SHAPE_TYPES } from "../utils/types";
+import {
+  ACTION_TYPES,
+  IAnnotation,
+  SHAPE_COLORS,
+  SHAPE_TYPES,
+} from "../utils/types";
 import Dialog from "./Dialog";
 
 interface BoardProps {
@@ -83,32 +90,45 @@ const Board = ({ action }: BoardProps) => {
         seconcClickX: e.clientX,
         seconcClickY: e.clientY,
       });
-    } else if (action === ACTION_TYPES.SELECT) {
+    } else if (action === ACTION_TYPES.SELECT && context) {
       const { clientX: mouseClickX, clientY: mouseClickY } = e;
 
       annotations.forEach((annotation) => {
-        // inside rect? highlight it - WIP
-        // ...
-        // ...
-        // ...
-
-        // inside rect? highlight it - WIP
-        const radius = Math.sqrt(
-          (annotation.firstClickX! - annotation.seconcClickX! + MARGINS) ** 2 +
-            (annotation.firstClickY! - annotation.seconcClickY! + MARGINS) ** 2
-        );
-        const isInsideCircle = isPointInsideCircle(
-          mouseClickX,
-          mouseClickY,
-          annotation.firstClickX ?? 0,
-          annotation.firstClickY ?? 0,
-          radius
-        );
-        if (isInsideCircle) {
-          console.log("isInsideCircle = " + annotation.label);
-          // ....
-          // ....
-          // ....
+        if (annotation.type === SHAPE_TYPES.RECTANGLE) {
+          if (isPointInRectangle(mouseClickX, mouseClickY, annotation)) {
+            console.log("isPointInRectangle = " + annotation.label);
+            drawAnnotation(
+              annotation,
+              context,
+              annotation.type,
+              false,
+              SHAPE_COLORS.HOVERED
+            );
+          }
+        } else if (annotation.type === SHAPE_TYPES.CIRCLE) {
+          const radius = Math.sqrt(
+            (annotation.firstClickX! - annotation.seconcClickX! + MARGINS) **
+              2 +
+              (annotation.firstClickY! - annotation.seconcClickY! + MARGINS) **
+                2
+          );
+          if (
+            isPointInsideCircle(
+              mouseClickX,
+              mouseClickY,
+              annotation.firstClickX ?? 0,
+              annotation.firstClickY ?? 0,
+              radius
+            )
+          ) {
+            drawAnnotation(
+              annotation,
+              context,
+              annotation.type,
+              false,
+              SHAPE_COLORS.HOVERED
+            );
+          }
         }
       });
     }

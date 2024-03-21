@@ -13,7 +13,8 @@ export const drawAnnotation = (
   annotation: IAnnotation,
   ctx: CanvasRenderingContext2D,
   annotationType: SHAPE_TYPES = SHAPE_TYPES.RECTANGLE,
-  dashed: boolean = false
+  dashed: boolean = false,
+  color?: SHAPE_COLORS
 ) => {
   const { firstClickX, firstClickY, seconcClickX, seconcClickY } = annotation;
   if (!firstClickX || !firstClickY || !seconcClickX || !seconcClickY) return;
@@ -31,7 +32,7 @@ export const drawAnnotation = (
     ctx.setLineDash([5, 5]);
   }
   if (annotationType === SHAPE_TYPES.RECTANGLE) {
-    ctx.strokeStyle = SHAPE_COLORS.RECTANGLE;
+    ctx.strokeStyle = color ?? SHAPE_COLORS.RECTANGLE;
     ctx.strokeRect(firstClickX - MARGINS, firstClickY - MARGINS, width, height);
     drawAnnotationLabel(annotation, ctx);
   } else {
@@ -39,7 +40,7 @@ export const drawAnnotation = (
       (firstClickX - seconcClickX + MARGINS) ** 2 +
         (firstClickY - seconcClickY + MARGINS) ** 2
     );
-    ctx.strokeStyle = SHAPE_COLORS.CIRCLE;
+    ctx.strokeStyle = color ?? SHAPE_COLORS.CIRCLE;
     drawAnnotationLabel(annotation, ctx, firstClickX, firstClickY);
     ctx.beginPath();
     ctx.arc(firstClickX, firstClickY, radius, 0, 2 * Math.PI);
@@ -110,3 +111,19 @@ export function isPointInsideCircle(
   // Restituisce true se la distanza è minore o uguale al raggio, false altrimenti
   return distance <= radius;
 }
+
+export const isPointInRectangle = (
+  mouseX: number,
+  mouseY: number,
+  annotation: IAnnotation
+) => {
+  const { firstClickX, firstClickY, seconcClickX, seconcClickY } = annotation;
+  if (!firstClickX || !firstClickY || !seconcClickX || !seconcClickY)
+    return false;
+  return (
+    mouseX >= Math.min(firstClickX, seconcClickX) &&
+    mouseX <= Math.max(firstClickX, seconcClickX) &&
+    mouseY >= Math.min(firstClickY, seconcClickY) &&
+    mouseY <= Math.max(firstClickY, seconcClickY)
+  );
+};
