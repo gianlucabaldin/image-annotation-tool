@@ -30,6 +30,7 @@ const Board = ({ action }: BoardProps) => {
       const ctx = canvas.getContext("2d");
       if (ctx) {
         setContext(ctx);
+        ctx.lineWidth = 3;
       }
     }
   }, []);
@@ -51,15 +52,11 @@ const Board = ({ action }: BoardProps) => {
         const { firstClickX, firstClickY } = coordinates;
         if (!!firstClickX && !!firstClickY) {
           // Second click, ends the drawing and opens dialog
-          // const width = mouseX - firstClickX;
-          // const height = mouseY - firstClickY;
           const newAnnotation: IAnnotation = {
             firstClickX,
             firstClickY,
             seconcClickX: mouseX,
             seconcClickY: mouseY,
-            // seconcClickX: firstClickX + width,
-            // seconcClickY: firstClickY + height,
             type: annotationType,
             id: Date.now().toString(),
           };
@@ -179,7 +176,10 @@ const Board = ({ action }: BoardProps) => {
         onMouseMove={handleMouseMove}
         width={800}
         height={500}
-        className={"m-4 border border-gray-400"}
+        className={"m-4 border border-gray-400 bg-cover bg-center "}
+        style={{
+          backgroundImage: `url(/bg.jpg)`,
+        }}
       />
       {openDialog && (
         <Dialog onClose={handleOnCloseDialog} onSave={handleSaveAnnotation} />

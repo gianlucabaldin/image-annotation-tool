@@ -48,7 +48,7 @@ const drawAnnotationLabel = (
   centerX?: number,
   centerY?: number
 ) => {
-  ctx.font = "14px Arial";
+  ctx.font = "bolder 20px Arial";
   if (annotation.type === SHAPE_TYPES.RECTANGLE) {
     ctx.fillStyle = SHAPE_COLORS.RECTANGLE;
     ctx.fillText(
