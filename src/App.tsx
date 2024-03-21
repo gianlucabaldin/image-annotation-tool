@@ -6,14 +6,10 @@ import { ACTION_TYPES } from "./utils/types";
 const App: React.FC = () => {
   const [action, setAction] = useState<ACTION_TYPES | undefined>(undefined);
   return (
-    <>
-      <div className="flex">
-        <Board action={action} />
-        <Toolbar setAction={setAction} />
-      </div>
-      {/* to remove */}
-      <p>action: *{(action ?? "undefined").toString()}*</p>
-    </>
+    <div className="flex">
+      <Board action={action} />
+      <Toolbar setAction={setAction} />
+    </div>
   );
 };
 

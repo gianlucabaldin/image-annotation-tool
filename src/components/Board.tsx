@@ -184,28 +184,6 @@ const Board = ({ action }: BoardProps) => {
       {openDialog && (
         <Dialog onClose={handleOnCloseDialog} onSave={handleSaveAnnotation} />
       )}
-      <p className="mb-4">
-        Mouse position: ({mouseX}, {mouseY})
-      </p>
-      {canvasCoordinates && (
-        <div className="flex justify-evenly mb-4">
-          <div>Top: {canvasCoordinates.top}</div>
-          <div>Left: {canvasCoordinates.left}</div>
-          <div>Right: {canvasCoordinates.right}</div>
-          <div>Bottom: {canvasCoordinates.bottom}</div>
-          <div>Width: {canvasCoordinates.width}</div>
-          <div>Height: {canvasCoordinates.height}</div>
-        </div>
-      )}
-      annotations: <br />
-      {annotations.length &&
-        annotations.map((s, i) => (
-          <p key={i}>{JSON.stringify(s, undefined, 2)}</p>
-        ))}
-      <hr />
-      hovered:
-      {/* <br /> {hovered && <p>{JSON.stringify(hovered, undefined, 2)}</p>} */}
-      <hr />
     </div>
   );
 };
