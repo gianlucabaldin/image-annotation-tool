@@ -1,4 +1,3 @@
-import { MARGINS } from "./const";
 import { IAnnotation, SHAPE_COLORS, SHAPE_TYPES } from "./types";
 
 export const drawAnnotation = (
@@ -25,12 +24,11 @@ export const drawAnnotation = (
   }
   if (annotationType === SHAPE_TYPES.RECTANGLE) {
     ctx.strokeStyle = color ?? SHAPE_COLORS.RECTANGLE;
-    ctx.strokeRect(firstClickX - MARGINS, firstClickY - MARGINS, width, height);
+    ctx.strokeRect(firstClickX, firstClickY, width, height);
     drawAnnotationLabel(annotation, ctx);
   } else {
     const radius = Math.sqrt(
-      (firstClickX - seconcClickX + MARGINS) ** 2 +
-        (firstClickY - seconcClickY + MARGINS) ** 2
+      (firstClickX - seconcClickX) ** 2 + (firstClickY - seconcClickY) ** 2
     );
     ctx.strokeStyle = color ?? SHAPE_COLORS.CIRCLE;
     drawAnnotationLabel(annotation, ctx, firstClickX, firstClickY);
@@ -69,7 +67,7 @@ const drawAnnotationLabel = (
   }
 };
 
-// Draw temporary dashed annotation on canvas while user is drawing
+// Draw ONE temporary dashed annotation on canvas while user is drawing
 export const drawTemporaryAnnotation = (
   coordinates: IAnnotation,
   ctx: CanvasRenderingContext2D,
@@ -112,8 +110,8 @@ export const highlightAnnotation = (
       );
     } else if (annotation.type === SHAPE_TYPES.CIRCLE) {
       const radius = Math.sqrt(
-        (annotation.firstClickX! - annotation.seconcClickX! + MARGINS) ** 2 +
-          (annotation.firstClickY! - annotation.seconcClickY! + MARGINS) ** 2
+        (annotation.firstClickX! - annotation.seconcClickX!) ** 2 +
+          (annotation.firstClickY! - annotation.seconcClickY!) ** 2
       );
       const isHovered = isPointInsideCircle(
         mouseClickX,

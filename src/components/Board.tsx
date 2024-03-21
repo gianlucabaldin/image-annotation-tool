@@ -42,9 +42,11 @@ const Board = ({ action }: BoardProps) => {
         console.log("action is not select");
         return;
       }
-      const { clientX, clientY } = e;
-      const mouseX = clientX;
-      const mouseY = clientY;
+      const {
+        nativeEvent: { offsetX, offsetY },
+      } = e;
+      const mouseX = offsetX;
+      const mouseY = offsetY;
       if (!isDrawing) {
         // First click, starts the drawing
         setCoordinates({ firstClickX: mouseX, firstClickY: mouseY });
@@ -76,11 +78,11 @@ const Board = ({ action }: BoardProps) => {
     if (isDrawing && coordinates) {
       setCoordinates({
         ...coordinates,
-        seconcClickX: e.clientX,
-        seconcClickY: e.clientY,
+        seconcClickX: e.nativeEvent.offsetX,
+        seconcClickY: e.nativeEvent.offsetY,
       });
     } else if (action === ACTION_TYPES.SELECT && context) {
-      const { clientX: mouseClickX, clientY: mouseClickY } = e;
+      const { offsetX: mouseClickX, offsetY: mouseClickY } = e.nativeEvent;
       // if hover an annotation, highlight it in yellow
       // if aready over one and mouse points outside of the annotation
       // remove the highlight color and restore its original one
@@ -143,40 +145,15 @@ const Board = ({ action }: BoardProps) => {
     setAnnotations(annotationsCopy);
   };
 
-  // TO remove
-  const [mouseX, setMouseX] = useState(0);
-  const [mouseY, setMouseY] = useState(0);
-  const handleMouseMove2 = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
-    e.preventDefault();
-    setMouseX(e.clientX);
-    setMouseY(e.clientY);
-  };
-  const getCanvasCoordinates = () => {
-    if (canvasRef.current) {
-      const rect = canvasRef.current.getBoundingClientRect();
-      return {
-        top: rect.top + window.scrollY,
-        left: rect.left + window.scrollX,
-        right: rect.right + window.scrollX,
-        bottom: rect.bottom + window.scrollY,
-        width: rect.width,
-        height: rect.height,
-      };
-    }
-    return null;
-  };
-
-  const canvasCoordinates = getCanvasCoordinates();
-
   return (
-    <div className="flex flex-col" onMouseMove={handleMouseMove2}>
+    <div className="flex flex-col">
       <canvas
         ref={canvasRef}
         onClick={handleClick}
         onMouseMove={handleMouseMove}
         width={800}
         height={500}
-        className={"m-4 border border-gray-400 bg-cover bg-center "}
+        className={"m-8 border border-gray-400 bg-cover bg-center "}
         style={{
           backgroundImage: `url(/bg.jpg)`,
         }}
