@@ -39,7 +39,6 @@ const Board = ({ action }: BoardProps) => {
     e.preventDefault();
     if (context && action) {
       if (action === ACTION_TYPES.SELECT) {
-        console.log("action is not select");
         return;
       }
       const {

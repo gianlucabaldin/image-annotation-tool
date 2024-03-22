@@ -62,9 +62,6 @@ const drawAnnotationLabel = (
     );
   } else {
     ctx.fillStyle = SHAPE_COLORS.CIRCLE;
-    console.log("labelWidth", labelWidth);
-    console.log("🚀 ~ centerX:", centerX);
-    console.log("🚀 ~ centerY:", centerY);
     // draw centered text in the middle of the circle, just a bit up
     // in order not to overlap with the hand used to select
     ctx.fillText(
