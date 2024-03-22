@@ -14,11 +14,16 @@ const App: React.FC = () => {
     alert("Session saved successfully!");
   };
 
+  const deleteSession = () => {
+    localStorage.removeItem("canvasState");
+    alert("Session deleted successfully!");
+    window.location.reload();
+  };
+
   const loadPrevSession = (): any => {
     const canvasStateString = localStorage.getItem("canvasState");
     if (!canvasStateString) return;
     setStoredAnnotations(() => JSON.parse(canvasStateString));
-    alert("Previous session loaded!");
   };
 
   useEffect(() => {
@@ -35,6 +40,7 @@ const App: React.FC = () => {
           action={action}
           storedAnnotations={storedAnnotations ?? []}
           saveSession={saveSession}
+          deleteSession={deleteSession}
         />
         <Toolbar setAction={setAction} />
       </div>

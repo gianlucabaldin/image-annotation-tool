@@ -11,15 +11,21 @@ interface BoardProps {
   action?: ACTION_TYPES;
   storedAnnotations?: Array<IAnnotation>;
   saveSession: (annotations: IAnnotation[]) => void;
+  deleteSession: () => void;
 }
 
-const Board = ({ action, storedAnnotations = [], saveSession }: BoardProps) => {
+const Board = ({
+  action,
+  storedAnnotations = [],
+  saveSession,
+  deleteSession,
+}: BoardProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [coordinates, setCoordinates] = useState<IAnnotation | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [annotations, setAnnotations] = useState<Array<IAnnotation>>([]);
   const [context, setContext] = useState<CanvasRenderingContext2D | null>(null);
-  const [openDialog, setOpenDialog] = useState(false); // State for dialog
+  const [openDialog, setOpenDialog] = useState(false);
 
   const annotationType =
     action === ACTION_TYPES.DRAW_RECTANGLE
@@ -166,12 +172,21 @@ const Board = ({ action, storedAnnotations = [], saveSession }: BoardProps) => {
         <Dialog onClose={handleOnCloseDialog} onSave={handleSaveAnnotation} />
       )}
 
-      <button
-        className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded my-auto w-48 mx-8"
-        onClick={() => saveSession(annotations)}
-      >
-        SAVE SESSION
-      </button>
+      <div className="flex justify-center">
+        <button
+          className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded my-auto w-48 mx-8"
+          onClick={() => saveSession(annotations)}
+        >
+          SAVE SESSION
+        </button>
+
+        <button
+          className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded my-auto w-48 mx-8"
+          onClick={deleteSession}
+        >
+          DELETE SESSION
+        </button>
+      </div>
     </div>
   );
 };
