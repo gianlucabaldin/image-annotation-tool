@@ -124,18 +124,10 @@ export const highlightAnnotation = (
       drawHand(context, annotation);
     } else {
       // clear previous hand, if any
-      const { firstClickX, firstClickY, seconcClickX, seconcClickY } =
-        annotation;
-      if (!firstClickX || !firstClickY || !seconcClickX || !seconcClickY)
-        return;
-      const dimensions = getAnnotationWidthAndHeight(annotation);
-      if (dimensions) {
-        context.clearRect(
-          firstClickX,
-          firstClickY,
-          dimensions.width,
-          dimensions.height
-        );
+      const coordinates = getCenterPoint(annotation);
+      if (coordinates) {
+        // consider the 32px icon offset
+        context.clearRect(coordinates.x - 16, coordinates.y - 16, 32, 32);
       }
     }
   });
@@ -179,17 +171,21 @@ export const drawHand = function (
   const handImage = new Image();
   handImage.src = "/hand.ico";
   handImage.onload = function () {
-    const x =
-      annotation.type === SHAPE_TYPES.CIRCLE
-        ? firstClickX
-        : (firstClickX + seconcClickX) / 2;
-    const y =
-      annotation.type === SHAPE_TYPES.CIRCLE
-        ? firstClickY
-        : (firstClickY + seconcClickY) / 2;
+    // const x =
+    //   annotation.type === SHAPE_TYPES.CIRCLE
+    //     ? firstClickX
+    //     : (firstClickX + seconcClickX) / 2;
+    // const y =
+    //   annotation.type === SHAPE_TYPES.CIRCLE
+    //     ? firstClickY
+    //     : (firstClickY + seconcClickY) / 2;
+    const center = getCenterPoint(annotation);
     // since the hand image is 32x32, we need to offset the middle point (R) or the center point (C)
     // by hald of the image (16px)
-    ctx.drawImage(handImage, x - 16, y - 16);
+    if (center) {
+      ctx.drawImage(handImage, center.x - 16, center.y - 16);
+    }
+    // ctx.drawImage(handImage, x - 16, y - 16);
   };
 };
 
@@ -200,4 +196,20 @@ const getAnnotationWidthAndHeight = (annotation: IAnnotation) => {
     width: Math.abs(firstClickX - seconcClickX),
     height: Math.abs(firstClickY - seconcClickY),
   };
+};
+
+export const getCenterPoint = (annotation: IAnnotation) => {
+  const { firstClickX, firstClickY, seconcClickX, seconcClickY } = annotation;
+  if (!firstClickX || !firstClickY || !seconcClickX || !seconcClickY) {
+    return;
+  }
+  const x =
+    annotation.type === SHAPE_TYPES.CIRCLE
+      ? firstClickX
+      : (firstClickX + seconcClickX) / 2;
+  const y =
+    annotation.type === SHAPE_TYPES.CIRCLE
+      ? firstClickY
+      : (firstClickY + seconcClickY) / 2;
+  return { x, y };
 };
