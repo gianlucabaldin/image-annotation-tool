@@ -4,6 +4,8 @@ This projet is a playground to work with html canvas: it shows a single canvas w
 You can draw rectangles and circles on the canvas and give them a label: a shape with a label is called an "annotation".
 Once drawn, you have the possibility to select the annotations, too.
 
+You can save the current session by clicking on the "save" button, which will automatically restore it in case of a page refresh or closure of the tab/browser. You can also delete it using its corresponding button.
+
 ## How to run the project locally
 
 - clone the repository
