@@ -25,6 +25,8 @@ export const drawAnnotation = (
     const radius = Math.sqrt(
       (firstClickX - seconcClickX) ** 2 + (firstClickY - seconcClickY) ** 2
     );
+    const center = getCenterPoint(annotation);
+    if (!center) return;
     ctx.strokeStyle = color ?? SHAPE_COLORS.CIRCLE;
     drawAnnotationLabel(annotation, ctx, firstClickX, firstClickY);
     ctx.beginPath();
@@ -42,22 +44,33 @@ const drawAnnotationLabel = (
   centerY?: number
 ) => {
   ctx.font = "bolder 20px Arial";
-  if (annotation.type === SHAPE_TYPES.RECTANGLE) {
+  // calculate text length
+  const labelWidth = ctx.measureText(annotation.label ?? "").width;
+  const dimensions = getAnnotationWidthAndHeight(annotation);
+  if (
+    annotation.type === SHAPE_TYPES.RECTANGLE &&
+    annotation.firstClickX &&
+    annotation.firstClickY
+  ) {
+    const { firstClickX, firstClickY } = annotation;
     ctx.fillStyle = SHAPE_COLORS.RECTANGLE;
+    // draw centered text in the middle of the rectangle, a bit below the upper line
     ctx.fillText(
       annotation.label ?? "",
-      annotation.firstClickX ?? 0,
-      annotation.firstClickY ?? 0 - 10
+      firstClickX + (dimensions?.width ?? 0) / 2 - labelWidth / 2,
+      firstClickY + 30
     );
   } else {
     ctx.fillStyle = SHAPE_COLORS.CIRCLE;
-    // calculate text length
-    const labelWidth = ctx.measureText(annotation.label ?? "").width;
-    // draw text in the middle of the circle
+    console.log("labelWidth", labelWidth);
+    console.log("🚀 ~ centerX:", centerX);
+    console.log("🚀 ~ centerY:", centerY);
+    // draw centered text in the middle of the circle, just a bit up
+    // in order not to overlap with the hand used to select
     ctx.fillText(
       annotation.label ?? "",
-      centerX ?? 0 - labelWidth / 2,
-      centerY ?? 0 + 5
+      (centerX ?? 0) - labelWidth / 2,
+      centerY ?? 0 - 30
     );
   }
 };
