@@ -67,7 +67,7 @@ const drawAnnotationLabel = (
     ctx.fillText(
       annotation.label ?? "",
       (centerX ?? 0) - labelWidth / 2,
-      centerY ?? 0 - 30
+      (centerY ?? 0) - 30
     );
   }
 };
