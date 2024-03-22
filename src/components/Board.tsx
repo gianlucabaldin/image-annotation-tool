@@ -9,9 +9,11 @@ import Dialog from "./Dialog";
 
 interface BoardProps {
   action?: ACTION_TYPES;
+  storedAnnotations?: Array<IAnnotation>;
+  saveSession: (annotations: IAnnotation[]) => void;
 }
 
-const Board = ({ action }: BoardProps) => {
+const Board = ({ action, storedAnnotations = [], saveSession }: BoardProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [coordinates, setCoordinates] = useState<IAnnotation | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -31,9 +33,12 @@ const Board = ({ action }: BoardProps) => {
       if (ctx) {
         setContext(ctx);
         ctx.lineWidth = 3;
+        if (storedAnnotations.length > 0) {
+          setAnnotations(storedAnnotations);
+        }
       }
     }
-  }, []);
+  }, [canvasRef, storedAnnotations]);
 
   const handleClick = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
     e.preventDefault();
@@ -160,6 +165,13 @@ const Board = ({ action }: BoardProps) => {
       {openDialog && (
         <Dialog onClose={handleOnCloseDialog} onSave={handleSaveAnnotation} />
       )}
+
+      <button
+        className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded my-auto w-48 mx-8"
+        onClick={() => saveSession(annotations)}
+      >
+        SAVE SESSION
+      </button>
     </div>
   );
 };
