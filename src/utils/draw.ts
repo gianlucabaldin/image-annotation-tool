@@ -25,7 +25,7 @@ export const drawAnnotation = (
     const radius = Math.sqrt(
       (firstClickX - seconcClickX) ** 2 + (firstClickY - seconcClickY) ** 2
     );
-    const center = getCenterPoint(annotation);
+    const center = getAnnotationCenterPoint(annotation);
     if (!center) return;
     ctx.strokeStyle = color ?? SHAPE_COLORS.CIRCLE;
     drawAnnotationLabel(annotation, ctx, firstClickX, firstClickY);
@@ -40,8 +40,8 @@ export const drawAnnotation = (
 const drawAnnotationLabel = (
   annotation: IAnnotation,
   ctx: CanvasRenderingContext2D,
-  centerX?: number,
-  centerY?: number
+  centerX?: number, // for circles
+  centerY?: number // for circles
 ) => {
   ctx.font = "bolder 20px Arial";
   // calculate text length
@@ -73,6 +73,8 @@ const drawAnnotationLabel = (
 };
 
 // Draw ONE temporary dashed annotation on canvas while user is drawing
+// meaning the user has clicked once and it is moving on the canvas
+// before clicking the second time
 export const drawTemporaryAnnotation = (
   coordinates: IAnnotation,
   ctx: CanvasRenderingContext2D,
@@ -83,6 +85,7 @@ export const drawTemporaryAnnotation = (
   annotations.forEach((rect) => drawAnnotation(rect, ctx, rect.type));
   drawAnnotation({ ...coordinates }, ctx, annotationType, true);
 };
+
 export const redrawAllAnnotations = (
   ctx: CanvasRenderingContext2D,
   annotations: IAnnotation[]
@@ -93,6 +96,8 @@ export const redrawAllAnnotations = (
   );
 };
 
+// if user is in SELECT mode and hovers an annotation, highlight
+// the annotation in yellow and put a hand image in the middle to select it
 export const highlightAnnotation = (
   mouseClickX: number,
   mouseClickY: number,
@@ -130,11 +135,13 @@ export const highlightAnnotation = (
         isHovered ? SHAPE_COLORS.HOVERED : SHAPE_COLORS.CIRCLE
       );
     }
+
+    // if the mouse matches an annotation, draw a hand in the middle
     if (isHovered) {
       drawHand(context, annotation);
     } else {
       // clear previous hand, if any
-      const coordinates = getCenterPoint(annotation);
+      const coordinates = getAnnotationCenterPoint(annotation);
       if (coordinates) {
         // consider the 32px icon offset
         context.clearRect(coordinates.x - 16, coordinates.y - 16, 32, 32);
@@ -142,6 +149,8 @@ export const highlightAnnotation = (
     }
   });
 };
+
+// check if the mouse is inside the circle
 export function isPointInsideCircle(
   pointX: number,
   pointY: number,
@@ -154,6 +163,7 @@ export function isPointInsideCircle(
   return distance <= radius;
 }
 
+// check if the mouse is inside the rectangle
 export const isPointInRectangle = (
   mouseX: number,
   mouseY: number,
@@ -170,6 +180,7 @@ export const isPointInRectangle = (
   );
 };
 
+// draw a hand in the middle of the annotation
 export const drawHand = function (
   ctx: CanvasRenderingContext2D,
   annotation: IAnnotation
@@ -181,7 +192,7 @@ export const drawHand = function (
   const handImage = new Image();
   handImage.src = "/hand.ico";
   handImage.onload = function () {
-    const center = getCenterPoint(annotation);
+    const center = getAnnotationCenterPoint(annotation);
     // since the hand image is 32x32, we need to offset the middle point (R) or the center point (C)
     // by hald of the image (16px)
     if (center) {
@@ -199,7 +210,7 @@ const getAnnotationWidthAndHeight = (annotation: IAnnotation) => {
   };
 };
 
-export const getCenterPoint = (annotation: IAnnotation) => {
+export const getAnnotationCenterPoint = (annotation: IAnnotation) => {
   const { firstClickX, firstClickY, seconcClickX, seconcClickY } = annotation;
   if (!firstClickX || !firstClickY || !seconcClickX || !seconcClickY) {
     return;
