@@ -28,5 +28,3 @@ Builds the app for production to the `build` folder.
 
 ## Other technical info
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-The purpouse of it 
