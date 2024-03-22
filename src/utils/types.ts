@@ -19,8 +19,8 @@ export interface IAnnotation {
   id?: string;
   firstClickX?: number | null;
   firstClickY?: number | null;
-  seconcClickX?: number | null;
-  seconcClickY?: number | null;
+  secondClickX?: number | null;
+  secondClickY?: number | null;
   type?: SHAPE_TYPES;
   label?: string;
 }

@@ -7,8 +7,8 @@ export const drawAnnotation = (
   dashed: boolean = false,
   color?: SHAPE_COLORS
 ) => {
-  const { firstClickX, firstClickY, seconcClickX, seconcClickY } = annotation;
-  if (!firstClickX || !firstClickY || !seconcClickX || !seconcClickY) return;
+  const { firstClickX, firstClickY, secondClickX, secondClickY } = annotation;
+  if (!firstClickX || !firstClickY || !secondClickX || !secondClickY) return;
   const dimensions = getAnnotationWidthAndHeight(annotation);
   ctx.font = "14px Arial";
   if (dashed) {
@@ -23,7 +23,7 @@ export const drawAnnotation = (
     drawAnnotationLabel(annotation, ctx);
   } else {
     const radius = Math.sqrt(
-      (firstClickX - seconcClickX) ** 2 + (firstClickY - seconcClickY) ** 2
+      (firstClickX - secondClickX) ** 2 + (firstClickY - secondClickY) ** 2
     );
     const center = getAnnotationCenterPoint(annotation);
     if (!center) return;
@@ -45,7 +45,7 @@ const drawAnnotationLabel = (
 ) => {
   ctx.font = "bolder 20px Arial";
   // calculate text length
-  const labelWidth = ctx.measureText(annotation.label ?? "").width;
+  const labelWidth = ctx.measureText(annotation?.label ?? "").width;
   const dimensions = getAnnotationWidthAndHeight(annotation);
   if (
     annotation.type === SHAPE_TYPES.RECTANGLE &&
@@ -117,8 +117,8 @@ export const highlightAnnotation = (
       );
     } else if (annotation.type === SHAPE_TYPES.CIRCLE) {
       const radius = Math.sqrt(
-        (annotation.firstClickX! - annotation.seconcClickX!) ** 2 +
-          (annotation.firstClickY! - annotation.seconcClickY!) ** 2
+        (annotation.firstClickX! - annotation.secondClickX!) ** 2 +
+          (annotation.firstClickY! - annotation.secondClickY!) ** 2
       );
       isHovered = isPointInsideCircle(
         mouseClickX,
@@ -169,14 +169,14 @@ export const isPointInRectangle = (
   mouseY: number,
   annotation: IAnnotation
 ) => {
-  const { firstClickX, firstClickY, seconcClickX, seconcClickY } = annotation;
-  if (!firstClickX || !firstClickY || !seconcClickX || !seconcClickY)
+  const { firstClickX, firstClickY, secondClickX, secondClickY } = annotation;
+  if (!firstClickX || !firstClickY || !secondClickX || !secondClickY)
     return false;
   return (
-    mouseX >= Math.min(firstClickX, seconcClickX) &&
-    mouseX <= Math.max(firstClickX, seconcClickX) &&
-    mouseY >= Math.min(firstClickY, seconcClickY) &&
-    mouseY <= Math.max(firstClickY, seconcClickY)
+    mouseX >= Math.min(firstClickX, secondClickX) &&
+    mouseX <= Math.max(firstClickX, secondClickX) &&
+    mouseY >= Math.min(firstClickY, secondClickY) &&
+    mouseY <= Math.max(firstClickY, secondClickY)
   );
 };
 
@@ -185,8 +185,8 @@ export const drawHand = function (
   ctx: CanvasRenderingContext2D,
   annotation: IAnnotation
 ) {
-  const { firstClickX, firstClickY, seconcClickX, seconcClickY } = annotation;
-  if (!firstClickX || !firstClickY || !seconcClickX || !seconcClickY) {
+  const { firstClickX, firstClickY, secondClickX, secondClickY } = annotation;
+  if (!firstClickX || !firstClickY || !secondClickX || !secondClickY) {
     return;
   }
   const handImage = new Image();
@@ -201,27 +201,27 @@ export const drawHand = function (
   };
 };
 
-const getAnnotationWidthAndHeight = (annotation: IAnnotation) => {
-  const { firstClickX, firstClickY, seconcClickX, seconcClickY } = annotation;
-  if (!firstClickX || !firstClickY || !seconcClickX || !seconcClickY) return;
+export const getAnnotationWidthAndHeight = (annotation: IAnnotation) => {
+  const { firstClickX, firstClickY, secondClickX, secondClickY } = annotation;
+  if (!firstClickX || !firstClickY || !secondClickX || !secondClickY) return;
   return {
-    width: Math.abs(firstClickX - seconcClickX),
-    height: Math.abs(firstClickY - seconcClickY),
+    width: Math.abs(firstClickX - secondClickX),
+    height: Math.abs(firstClickY - secondClickY),
   };
 };
 
 export const getAnnotationCenterPoint = (annotation: IAnnotation) => {
-  const { firstClickX, firstClickY, seconcClickX, seconcClickY } = annotation;
-  if (!firstClickX || !firstClickY || !seconcClickX || !seconcClickY) {
+  const { firstClickX, firstClickY, secondClickX, secondClickY } = annotation;
+  if (!firstClickX || !firstClickY || !secondClickX || !secondClickY) {
     return;
   }
   const x =
     annotation.type === SHAPE_TYPES.CIRCLE
       ? firstClickX
-      : (firstClickX + seconcClickX) / 2;
+      : (firstClickX + secondClickX) / 2;
   const y =
     annotation.type === SHAPE_TYPES.CIRCLE
       ? firstClickY
-      : (firstClickY + seconcClickY) / 2;
+      : (firstClickY + secondClickY) / 2;
   return { x, y };
 };

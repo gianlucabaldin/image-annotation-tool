@@ -56,8 +56,8 @@ const Board = ({ action }: BoardProps) => {
           const newAnnotation: IAnnotation = {
             firstClickX,
             firstClickY,
-            seconcClickX: mouseX,
-            seconcClickY: mouseY,
+            secondClickX: mouseX,
+            secondClickY: mouseY,
             type: annotationType,
             id: Date.now().toString(), // just a random id
           };
@@ -77,8 +77,8 @@ const Board = ({ action }: BoardProps) => {
     if (isDrawing && coordinates) {
       setCoordinates({
         ...coordinates,
-        seconcClickX: e.nativeEvent.offsetX,
-        seconcClickY: e.nativeEvent.offsetY,
+        secondClickX: e.nativeEvent.offsetX,
+        secondClickY: e.nativeEvent.offsetY,
       });
     } else if (action === ACTION_TYPES.SELECT && context) {
       const { offsetX: mouseClickX, offsetY: mouseClickY } = e.nativeEvent;
@@ -106,8 +106,8 @@ const Board = ({ action }: BoardProps) => {
       const {
         firstClickX,
         firstClickY,
-        seconcClickX: endX,
-        seconcClickY: endY,
+        secondClickX: endX,
+        secondClickY: endY,
       } = coordinates;
       if (
         firstClickX !== null &&
