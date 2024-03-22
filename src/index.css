@@ -6,34 +6,3 @@
   width: 100vw;
   height: 100vh;
 }
-
-.canvas {
-  width: 500px;
-  height: 500px;
-  border: 1px solid #ccc;
-}
-
-.rectangle {
-  background-color: red;
-  opacity: 0.5;
-}
-
-.dialog {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: gray;
-  padding: 20px;
-  border-radius: 10px;
-  z-index: 10;
-}
-
-.dialog-content {
-  margin-bottom: 10px;
-}
-
-.dialog-actions {
-  display: flex;
-  justify-content: flex-end;
-}

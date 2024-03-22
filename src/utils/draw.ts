@@ -171,21 +171,12 @@ export const drawHand = function (
   const handImage = new Image();
   handImage.src = "/hand.ico";
   handImage.onload = function () {
-    // const x =
-    //   annotation.type === SHAPE_TYPES.CIRCLE
-    //     ? firstClickX
-    //     : (firstClickX + seconcClickX) / 2;
-    // const y =
-    //   annotation.type === SHAPE_TYPES.CIRCLE
-    //     ? firstClickY
-    //     : (firstClickY + seconcClickY) / 2;
     const center = getCenterPoint(annotation);
     // since the hand image is 32x32, we need to offset the middle point (R) or the center point (C)
     // by hald of the image (16px)
     if (center) {
       ctx.drawImage(handImage, center.x - 16, center.y - 16);
     }
-    // ctx.drawImage(handImage, x - 16, y - 16);
   };
 };
 
