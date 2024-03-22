@@ -60,7 +60,7 @@ const Board = ({ action }: BoardProps) => {
             seconcClickX: mouseX,
             seconcClickY: mouseY,
             type: annotationType,
-            id: Date.now().toString(),
+            id: Date.now().toString(), // just a random id
           };
           setAnnotations([...annotations, newAnnotation]);
           setCoordinates(null); // Reset coordinates for next annotation

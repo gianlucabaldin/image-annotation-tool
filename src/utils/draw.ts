@@ -9,14 +9,7 @@ export const drawAnnotation = (
 ) => {
   const { firstClickX, firstClickY, seconcClickX, seconcClickY } = annotation;
   if (!firstClickX || !firstClickY || !seconcClickX || !seconcClickY) return;
-  const width =
-    firstClickX > seconcClickX
-      ? firstClickX - seconcClickX
-      : seconcClickX - firstClickX;
-  const height =
-    firstClickY > seconcClickY
-      ? firstClickY - seconcClickY
-      : seconcClickY - firstClickY;
+  const dimensions = getAnnotationWidthAndHeight(annotation);
   ctx.font = "14px Arial";
   if (dashed) {
     // dashed line when drawing (between first and second click)
@@ -24,6 +17,8 @@ export const drawAnnotation = (
   }
   if (annotationType === SHAPE_TYPES.RECTANGLE) {
     ctx.strokeStyle = color ?? SHAPE_COLORS.RECTANGLE;
+    if (!dimensions) return;
+    const { width, height } = dimensions;
     ctx.strokeRect(firstClickX, firstClickY, width, height);
     drawAnnotationLabel(annotation, ctx);
   } else {
@@ -95,12 +90,9 @@ export const highlightAnnotation = (
   annotations: IAnnotation[]
 ) => {
   annotations.forEach((annotation) => {
+    let isHovered = false;
     if (annotation.type === SHAPE_TYPES.RECTANGLE) {
-      const isHovered = isPointInRectangle(
-        mouseClickX,
-        mouseClickY,
-        annotation
-      );
+      isHovered = isPointInRectangle(mouseClickX, mouseClickY, annotation);
       drawAnnotation(
         annotation,
         context,
@@ -113,7 +105,7 @@ export const highlightAnnotation = (
         (annotation.firstClickX! - annotation.seconcClickX!) ** 2 +
           (annotation.firstClickY! - annotation.seconcClickY!) ** 2
       );
-      const isHovered = isPointInsideCircle(
+      isHovered = isPointInsideCircle(
         mouseClickX,
         mouseClickY,
         annotation.firstClickX ?? 0,
@@ -127,6 +119,24 @@ export const highlightAnnotation = (
         false,
         isHovered ? SHAPE_COLORS.HOVERED : SHAPE_COLORS.CIRCLE
       );
+    }
+    if (isHovered) {
+      drawHand(context, annotation);
+    } else {
+      // clear previous hand, if any
+      const { firstClickX, firstClickY, seconcClickX, seconcClickY } =
+        annotation;
+      if (!firstClickX || !firstClickY || !seconcClickX || !seconcClickY)
+        return;
+      const dimensions = getAnnotationWidthAndHeight(annotation);
+      if (dimensions) {
+        context.clearRect(
+          firstClickX,
+          firstClickY,
+          dimensions.width,
+          dimensions.height
+        );
+      }
     }
   });
 };
@@ -156,4 +166,38 @@ export const isPointInRectangle = (
     mouseY >= Math.min(firstClickY, seconcClickY) &&
     mouseY <= Math.max(firstClickY, seconcClickY)
   );
+};
+
+export const drawHand = function (
+  ctx: CanvasRenderingContext2D,
+  annotation: IAnnotation
+) {
+  const { firstClickX, firstClickY, seconcClickX, seconcClickY } = annotation;
+  if (!firstClickX || !firstClickY || !seconcClickX || !seconcClickY) {
+    return;
+  }
+  const handImage = new Image();
+  handImage.src = "/hand.ico";
+  handImage.onload = function () {
+    const x =
+      annotation.type === SHAPE_TYPES.CIRCLE
+        ? firstClickX
+        : (firstClickX + seconcClickX) / 2;
+    const y =
+      annotation.type === SHAPE_TYPES.CIRCLE
+        ? firstClickY
+        : (firstClickY + seconcClickY) / 2;
+    // since the hand image is 32x32, we need to offset the middle point (R) or the center point (C)
+    // by hald of the image (16px)
+    ctx.drawImage(handImage, x - 16, y - 16);
+  };
+};
+
+const getAnnotationWidthAndHeight = (annotation: IAnnotation) => {
+  const { firstClickX, firstClickY, seconcClickX, seconcClickY } = annotation;
+  if (!firstClickX || !firstClickY || !seconcClickX || !seconcClickY) return;
+  return {
+    width: Math.abs(firstClickX - seconcClickX),
+    height: Math.abs(firstClickY - seconcClickY),
+  };
 };
