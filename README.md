@@ -1,5 +1,7 @@
 # Annotation tools
 
+![alt text](image-1.png)
+
 This project is a playground to work with html canvas: it shows a single canvas with an image as background and a toolbar on the right side.
 You can draw rectangles and circles on the canvas and give them a label: a shape with a label is called an "annotation".
 Once drawn, you have the possibility to select the annotations, too.
